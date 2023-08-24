@@ -19,17 +19,29 @@ public class GameBalda {
     private String centralWord;
     private String[] arrayWithWords;
     private List<String> savedWords;
-    private List<Integer> busyColumn = new ArrayList<>();
-    private List<Character> letterOfCentralWord = new ArrayList<>();
+    private List<Character> letterOfCentralWord;
 
     public void gameBalda() {
+        prepareForGame();
+        int counterOfAttempt = 0;
+        while (true) {
+            continueToPlayGame();
+            counterOfAttempt++;
+            System.out.println("Lost letter which you can use: " + letterOfCentralWord + "\n");
+            if (counterOfAttempt == boardForGame.length) {
+                System.out.println("Thanks for game!");
+                break;
+            }
+        }
+    }
+
+    private void prepareForGame() {
         savedWords = new ArrayList<>();
-        findingFirstWord();
+        findingFirstWordFromBD();
         int number = RANDOMWORD.nextInt(arrayWithWords.length);
         centralWord = arrayWithWords[number];
         savedWords.add(centralWord);
         boardForGame = new char[centralWord.length()][centralWord.length()];
-
 
         letterOfCentralWord = centralWord.chars()
                 .mapToObj(e -> (char) e)
@@ -37,23 +49,14 @@ public class GameBalda {
 
         System.out.println("With this word we will play:");
         fillTheBordWithLetters(centralWord);
-        int counterOfAttempt = 0;
-
-        while (counterOfAttempt < 1000) {
-            continueToPlayGame();
-            counterOfAttempt++;
-            System.out.println("Lost letter: " + letterOfCentralWord);
-            System.out.print("\n");
-
-        }
     }
 
     private void continueToPlayGame() {
         showTheBoard();
         playerWord = playerInputWord();
         checkCorrectWord();
-        char letter = playerWord.charAt(playerWord.length() / 2);
-        writingPlayerWordInBoard(letter);
+        char middleLetterOfPlayerWord = playerWord.charAt(playerWord.length() / 2);
+        writingPlayerWordInBoard(middleLetterOfPlayerWord);
     }
 
     private void writingPlayerWordInBoard(char letter) {
@@ -73,7 +76,7 @@ public class GameBalda {
         }
     }
 
-    private void findingFirstWord() {
+    private void findingFirstWordFromBD() {
         try (BufferedReader br = new BufferedReader(new FileReader(PATHTOWORDS))) {
             arrayWithWords = br.readLine().split(", ");
         } catch (Exception e) {
@@ -120,7 +123,6 @@ public class GameBalda {
         }
 
         Character remove = playerWord.charAt(playerWord.length() / 2);
-        System.out.println(remove);
         letterOfCentralWord.remove(remove);
         savedWords.add(playerWord);
         return playerWord;
