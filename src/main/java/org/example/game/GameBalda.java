@@ -17,7 +17,7 @@ public class GameBalda {
     private char[][] boardForGame = null;
     private String playerWord = "";
     private String centralWord;
-    private String[] arrayWithWords;
+    private List<String> arrayWithWords = new ArrayList<>();
     private List<String> savedWords;
     private List<Character> letterOfCentralWord;
 
@@ -38,8 +38,8 @@ public class GameBalda {
     private void prepareForGame() {
         savedWords = new ArrayList<>();
         findingFirstWordFromBD();
-        int number = RANDOMWORD.nextInt(arrayWithWords.length);
-        centralWord = arrayWithWords[number];
+        int number = RANDOMWORD.nextInt(arrayWithWords.size());
+        centralWord = arrayWithWords.get(number);
         savedWords.add(centralWord);
         boardForGame = new char[centralWord.length()][centralWord.length()];
 
@@ -77,8 +77,11 @@ public class GameBalda {
     }
 
     private void findingFirstWordFromBD() {
+        int i = 0;
         try (BufferedReader br = new BufferedReader(new FileReader(PATHTOWORDS))) {
-            arrayWithWords = br.readLine().split(", ");
+            while (!br.readLine().equals("\n")) {
+                arrayWithWords.add(br.readLine());
+            }
         } catch (Exception e) {
             e.fillInStackTrace();
         }
